@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export const Dashboard = () => {
+    const navigate = useNavigate();
     const [flashcards, setFlashcards] = useState([]);
     const [newFlashcard, setNewFlashcard] = useState({ question: '', answer: '' });
     const [editingFlashcard, setEditingFlashcard] = useState(null);
@@ -79,8 +81,15 @@ export const Dashboard = () => {
 
     return (
         <div className="min-h-screen bg-gray-900 text-white p-8">
-            <h1 className="text-4xl font-bold mb-8">Flashcard Dashboard</h1>
-
+            <div className='flex justify-between'>
+                <button 
+                onClick={() => navigate('/')}
+                className="rounded-md border border-white px-3 h-10 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                    Home
+                </button>
+                <h1 className="md:text-4xl text-2xl font-bold mb-8">Flashcard Dashboard</h1>
+            </div>
+            
             {/* Add Flashcard */}
             <div className="mb-8 p-6 bg-gray-800 rounded-lg shadow-lg">
                 <h2 className="text-2xl font-semibold mb-4">Add New Flashcard</h2>

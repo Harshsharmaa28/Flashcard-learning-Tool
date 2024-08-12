@@ -25,20 +25,20 @@ const Flashcard = ({ flashcard, isFlipped, setIsFlipped }) => {
     };
 
     return (
-        <div className=''>
+        <div className=' overflow-hidden'>
             <div
-                className="flashcard-container w-[25rem] h-[15rem]"
+                className="flashcard-container w-screen md:w-[27rem] h-[15rem]"
                 onClick={handleFlip}
             >
                 <div className={`flashcard-inner ${isFlipped ? 'is-flipped' : ''}`}>
                     {/* Front of the card */}
                     <div className="flashcard-front">
-                        <p className="text-2xl font-bold text-white">{flashcard.question}</p>
+                        <p className="text-xl text-center font-bold text-white">{flashcard.question}</p>
                     </div>
 
                     {/* Back of the card */}
                     <div className="flashcard-back">
-                        <p className="text-2xl font-semibold text-white">{flashcard.answer}</p>
+                        <p className="text-xl text-center flex flex-wrap font-semibold text-white">{flashcard.answer}</p>
                     </div>
                 </div>
 
