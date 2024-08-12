@@ -1,3 +1,6 @@
+# Note for Flashcard server repo visit : 
+https://github.com/Harshsharmaa28/Flashcard-learning-Tool-Server
+
 # FlashCard Learning Tool
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
