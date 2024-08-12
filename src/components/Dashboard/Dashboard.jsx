@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 export const Dashboard = () => {
-    const [flashcards, setFlashcards] = useState([
-        { id: 1, question: 'What does HTML stand for?', answer: 'HyperText Markup Language' },
-        { id: 2, question: 'What is the time complexity of binary search?', answer: 'O(log n)' },
-        { id: 3, question: 'Name a popular JavaScript framework.', answer: 'React.js' },
-    ]);
+    const [flashcards, setFlashcards] = useState([]);
     const [newFlashcard, setNewFlashcard] = useState({ question: '', answer: '' });
     const [editingFlashcard, setEditingFlashcard] = useState(null);
+
+    // Base API URL from environment variable
+    const baseUrl = process.env.REACT_APP_API_BASE_URL;
+
+    //flashcards from the backend
+    useEffect(() => {
+        axios.get(`${baseUrl}/flashcards`)
+            .then(response => {
+                setFlashcards(response.data);
+            })
+            .catch(error => {
+                console.error("There was an error fetching the flashcards!", error);
+                toast.error("Failed to load flashcards");
+            });
+    }, [baseUrl]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -17,11 +29,19 @@ export const Dashboard = () => {
 
     const addFlashcard = () => {
         if (newFlashcard.question && newFlashcard.answer) {
-            setFlashcards([...flashcards, { ...newFlashcard, id: flashcards.length + 1 }]);
-            setNewFlashcard({ question: '', answer: '' });
-            toast.success("Flashcard Added Successfully")
+            axios.post(`${baseUrl}/flashcards`, newFlashcard)
+                .then(response => {
+                    setFlashcards([...flashcards, response.data]);
+                    setNewFlashcard({ question: '', answer: '' });
+                    toast.success("Flashcard Added Successfully");
+                })
+                .catch(error => {
+                    console.error("There was an error adding the flashcard!", error);
+                    toast.error("Failed to add flashcard");
+                });
+        } else {
+            toast.warning("All fields are required!");
         }
-        else toast.warning("All field are Required !")
     };
 
     const startEditing = (flashcard) => {
@@ -29,14 +49,32 @@ export const Dashboard = () => {
     };
 
     const saveEdit = () => {
-        setFlashcards(flashcards.map((fc) => (fc.id === editingFlashcard.id ? editingFlashcard : fc)));
-        setEditingFlashcard(null);
-        toast.success("Flashcard Updated Successfully")
+        axios.put(`${baseUrl}/flashcards/${editingFlashcard.id}`, editingFlashcard)
+            .then(response => {
+                const updatedFlashcards = flashcards?.map((fc) =>
+                    fc.id === editingFlashcard.id ? response.data : fc
+                );
+                setFlashcards(updatedFlashcards);
+                setEditingFlashcard(null);
+                toast.success("Flashcard Updated Successfully");
+            })
+            .catch(error => {
+                console.error("There was an error updating the flashcard!", error);
+                toast.error("Failed to update flashcard");
+            });
     };
 
     const deleteFlashcard = (id) => {
-        setFlashcards(flashcards.filter((fc) => fc.id !== id));
-        toast.success("Flashcard deleted Successfully")
+        axios.delete(`${baseUrl}/flashcards/${id}`)
+            .then(() => {
+                const remainingFlashcards = flashcards.filter((fc) => fc.id !== id);
+                setFlashcards(remainingFlashcards);
+                toast.success("Flashcard Deleted Successfully");
+            })
+            .catch(error => {
+                console.error("There was an error deleting the flashcard!", error);
+                toast.error("Failed to delete flashcard");
+            });
     };
 
     return (
@@ -115,7 +153,7 @@ export const Dashboard = () => {
             <div className="mb-8">
                 <h2 className="text-2xl font-semibold mb-4">Your Flashcards</h2>
                 <ul className="space-y-4">
-                    {flashcards.map((flashcard) => (
+                    {flashcards && flashcards?.map((flashcard) => (
                         <li
                             key={flashcard.id}
                             className="p-4 bg-gray-800 rounded-lg shadow-lg flex justify-between items-center"
@@ -145,4 +183,3 @@ export const Dashboard = () => {
         </div>
     );
 };
-

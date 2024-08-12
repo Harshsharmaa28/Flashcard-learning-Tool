@@ -5,16 +5,25 @@ import { useNavigate } from 'react-router-dom';
 
 export const FlashcardPage = () => {
     const navigate = useNavigate();
-    const sampleFlashcards = [
-        { id: 1, question: 'What does HTML stand for?', answer: 'HyperText Markup Language' },
-        { id: 2, question: 'What is the time complexity of binary search?', answer: 'O(log n)' },
-        { id: 3, question: 'Name a popular JavaScript framework.', answer: 'React.js' },
-    ];
-
-    const [flashcards] = useState(sampleFlashcards);
+    const [flashcards, setFlashcards] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
 
+    // Base API URL from environment variable
+    const baseUrl = process.env.REACT_APP_API_BASE_URL;
+
+    // Fetch flashcards from the backend
+    useEffect(() => {
+        axios.get(`${baseUrl}/flashcards`)
+            .then(response => {
+                setFlashcards(response.data);
+            })
+            .catch(error => {
+                console.error("There was an error fetching the flashcards!", error);
+            });
+    }, [baseUrl]);
+
+    console.log(flashcards)
     const handleNext = () => {
         setIsFlipped(false); // Reset flip state when moving to next flashcard
         setCurrentIndex((currentIndex + 1) % flashcards.length);
@@ -30,7 +39,7 @@ export const FlashcardPage = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-900 text-white">
-            <h1 className="text-4xl font-bold mb-8">Flashcard Viewer</h1>
+            <h1 className="text-4xl font-bold mb-8">Flashcards</h1>
             <div className="mb-8">
                 {flashcards.length > 0 && (
                     <Flashcard
@@ -40,7 +49,7 @@ export const FlashcardPage = () => {
                     />
                 )}
             </div>
-            <div className="flex items-center space-x-4 mb-8">
+            <div className="flex items-center gap-10 space-x-4 mb-8">
                 <button
                     onClick={handlePrevious}
                     aria-label="Previous flashcard"
@@ -72,4 +81,3 @@ export const FlashcardPage = () => {
         </div>
     );
 };
-

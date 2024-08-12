@@ -1,39 +1,62 @@
 import React, { useState } from 'react';
+import './Flashcard.css';
+import { ArrowRight } from 'lucide-react'
 
 const Flashcard = ({ flashcard, isFlipped, setIsFlipped }) => {
     const handleFlip = () => {
         setIsFlipped(!isFlipped);
     };
 
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: flashcard.question,
+                    text: `Check out this flashcard: ${flashcard.question} - ${flashcard.answer}`,
+                    url: window.location.href,
+                });
+                console.log('Flashcard shared successfully!');
+            } catch (error) {
+                console.error('Error sharing flashcard:', error);
+            }
+        } else {
+            alert('Sharing is not supported on this browser.');
+        }
+    };
+
     return (
-        <div
-            className="relative flex items-center justify-center w-96 h-60 p-6 border border-gray-300 rounded-xl shadow-lg cursor-pointer transform transition-transform duration-500 hover:scale-105"
-            onClick={handleFlip}
-            style={{
-                background: isFlipped
-                    ? 'linear-gradient(to right, #feca57, #ee5253)'
-                    : 'linear-gradient(to right, #111111, #1dd1a1)',
-            }}
-        >
+        <div className=''>
             <div
-                className={`absolute w-full h-full flex items-center justify-center transition-transform transform ${isFlipped ? 'rotate-y-180' : ''
-                    }`}
+                className="flashcard-container w-[25rem] h-[15rem]"
+                onClick={handleFlip}
             >
-                <div
-                    className={`absolute inset-0 flex items-center justify-center p-4 ${isFlipped ? 'opacity-0' : 'opacity-100'
-                        } transition-opacity duration-300`}
-                >
-                    <p className="text-2xl font-bold text-white">{flashcard.question}</p>
+                <div className={`flashcard-inner ${isFlipped ? 'is-flipped' : ''}`}>
+                    {/* Front of the card */}
+                    <div className="flashcard-front">
+                        <p className="text-2xl font-bold text-white">{flashcard.question}</p>
+                    </div>
+
+                    {/* Back of the card */}
+                    <div className="flashcard-back">
+                        <p className="text-2xl font-semibold text-white">{flashcard.answer}</p>
+                    </div>
                 </div>
-                <div
-                    className={`absolute inset-0 flex items-center justify-center p-4 ${isFlipped ? 'opacity-100' : 'opacity-0'
-                        } transition-opacity duration-300 rotate-y-180`}
+
+                {/* Share Button */}
+            </div>
+            <div className=' flex justify-center items-center'>
+                <button
+                    className=" border-1 p-2  mt-10 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-black hover:bg-gray-100"
+                    onClick={(e) => {
+                        e.stopPropagation(); // Prevent flip when clicking the share button
+                        handleShare();
+                    }}
                 >
-                    <p className="text-2xl font-semibold text-white">{flashcard.answer}</p>
-                </div>
+                    Share
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
             </div>
         </div>
-
     );
 };
 
