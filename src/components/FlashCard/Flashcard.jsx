@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Flashcard.css';
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Forward } from 'lucide-react'
 
 const Flashcard = ({ flashcard, isFlipped, setIsFlipped }) => {
     const handleFlip = () => {
@@ -44,16 +44,15 @@ const Flashcard = ({ flashcard, isFlipped, setIsFlipped }) => {
 
                 {/* Share Button */}
             </div>
-            <div className=' flex justify-center items-center'>
+            <div className='flex py-4 absolute -mt-14 ml-7 justify-center items-center'>
                 <button
-                    className=" border-1 p-2  mt-10 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-black hover:bg-gray-100"
+                    className=" absolute border-1 p-2  mt-10 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-black hover:bg-gray-100"
                     onClick={(e) => {
                         e.stopPropagation(); // Prevent flip when clicking the share button
                         handleShare();
                     }}
                 >
-                    Share
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <Forward className="ml-2 h-4 w-4" />
                 </button>
             </div>
         </div>

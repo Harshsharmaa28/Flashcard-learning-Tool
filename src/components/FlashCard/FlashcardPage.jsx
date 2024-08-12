@@ -11,7 +11,8 @@ export const FlashcardPage = () => {
     const [isFlipped, setIsFlipped] = useState(false);
     const [savedFlashcards, setSavedFlashcards] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isAdmin,setisAdmin] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+    const isAdmin = true;
 
     // Base API URL from environment variable
     const baseUrl = process.env.REACT_APP_API_BASE_URL;
@@ -24,6 +25,9 @@ export const FlashcardPage = () => {
             })
             .catch(error => {
                 console.error("There was an error fetching the flashcards!", error);
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     }, [baseUrl]);
 
@@ -39,13 +43,13 @@ export const FlashcardPage = () => {
     };
 
     const handlePrevious = () => {
-        setIsFlipped(false); // Reset flip state when moving to previous flashcard
+        setIsFlipped(false);
         setCurrentIndex((currentIndex - 1 + flashcards.length) % flashcards.length);
     };
 
     const saveFlashcard = () => {
         const flashcardToSave = flashcards[currentIndex];
-        if(savedFlashcards.includes(flashcardToSave)){
+        if (savedFlashcards.includes(flashcardToSave)) {
             toast.info("Already Saved");
             return;
         }
@@ -66,8 +70,8 @@ export const FlashcardPage = () => {
         setIsModalOpen(!isModalOpen);
     };
 
-    const handleDashboardclick = () =>{
-        if(isAdmin){
+    const handleDashboardclick = () => {
+        if (isAdmin) {
             alert("This Route is for admin but it is Accessible for Now only Click Ok to Continue...");
             navigate('/dashboard')
         }
@@ -87,15 +91,21 @@ export const FlashcardPage = () => {
                 View Saved Flashcards
             </button>
 
-            <div className="mb-8">
-                {flashcards.length > 0 && (
-                    <Flashcard
-                        flashcard={flashcards[currentIndex]}
-                        isFlipped={isFlipped}
-                        setIsFlipped={setIsFlipped}
-                    />
-                )}
-            </div>
+            {
+                isLoading ?
+                    <div className="flex items-center justify-center">
+                        <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
+                    </div>
+                    : <div className="mb-8">
+                        {flashcards.length > 0 && (
+                            <Flashcard
+                                flashcard={flashcards[currentIndex]}
+                                isFlipped={isFlipped}
+                                setIsFlipped={setIsFlipped}
+                            />
+                        )}
+                    </div>
+            }
             <div className="flex items-center gap-10 space-x-4 mb-8">
                 <button
                     onClick={handlePrevious}

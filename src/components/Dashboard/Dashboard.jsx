@@ -8,6 +8,7 @@ export const Dashboard = () => {
     const [flashcards, setFlashcards] = useState([]);
     const [newFlashcard, setNewFlashcard] = useState({ question: '', answer: '' });
     const [editingFlashcard, setEditingFlashcard] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Base API URL from environment variable
     const baseUrl = process.env.REACT_APP_API_BASE_URL;
@@ -21,6 +22,9 @@ export const Dashboard = () => {
             .catch(error => {
                 console.error("There was an error fetching the flashcards!", error);
                 toast.error("Failed to load flashcards");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     }, [baseUrl]);
 
@@ -40,6 +44,9 @@ export const Dashboard = () => {
                 .catch(error => {
                     console.error("There was an error adding the flashcard!", error);
                     toast.error("Failed to add flashcard");
+                })
+                .finally(() => {
+                    setIsLoading(false);
                 });
         } else {
             toast.warning("All fields are required!");
@@ -63,6 +70,9 @@ export const Dashboard = () => {
             .catch(error => {
                 console.error("There was an error updating the flashcard!", error);
                 toast.error("Failed to update flashcard");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -76,20 +86,23 @@ export const Dashboard = () => {
             .catch(error => {
                 console.error("There was an error deleting the flashcard!", error);
                 toast.error("Failed to delete flashcard");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
     return (
         <div className="min-h-screen bg-gray-900 text-white p-8">
             <div className='flex justify-between'>
-                <button 
-                onClick={() => navigate('/')}
-                className="rounded-md border border-white px-3 h-10 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                <button
+                    onClick={() => navigate('/')}
+                    className="rounded-md border border-white px-3 h-10 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
                     Home
                 </button>
                 <h1 className="md:text-4xl text-2xl font-bold mb-8">Flashcard Dashboard</h1>
             </div>
-            
+
             {/* Add Flashcard */}
             <div className="mb-8 p-6 bg-gray-800 rounded-lg shadow-lg">
                 <h2 className="text-2xl font-semibold mb-4">Add New Flashcard</h2>
@@ -114,6 +127,7 @@ export const Dashboard = () => {
                     />
                 </div>
                 <button
+                    disabled={isLoading}
                     onClick={addFlashcard}
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
                 >
@@ -150,6 +164,7 @@ export const Dashboard = () => {
                         />
                     </div>
                     <button
+                        disabled={isLoading}
                         onClick={saveEdit}
                         className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg"
                     >
@@ -173,12 +188,14 @@ export const Dashboard = () => {
                             </div>
                             <div className="flex space-x-4">
                                 <button
+                                    disabled={isLoading}
                                     onClick={() => startEditing(flashcard)}
                                     className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-lg"
                                 >
                                     Edit
                                 </button>
                                 <button
+                                    disabled={isLoading}
                                     onClick={() => deleteFlashcard(flashcard.id)}
                                     className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg"
                                 >
